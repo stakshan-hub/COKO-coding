@@ -1,0 +1,680 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COKO Coding - Neon Student Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-panel: #12121c;
+            --bg-card: #1a1a29;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff007f;
+            --neon-green: #00ff66;
+            --neon-purple: #9d00ff;
+            --text-main: #e0e0e0;
+            --text-muted: #8a8a9e;
+            --border: #2a2a40;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header & Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: var(--bg-panel);
+            border-bottom: 2px solid var(--border);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+        }
+
+        .logo span {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+        }
+
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Main Container Views */
+        .view {
+            display: none;
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .view.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* IDE VIEW */
+        .ide-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            height: calc(100vh - 160px);
+        }
+
+        .editor-pane, .preview-pane {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .pane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pane-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--neon-cyan);
+        }
+
+        .editor-tabs {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            border-radius: 4px;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-deep);
+            color: var(--neon-pink);
+            font-weight: 600;
+        }
+
+        textarea.code-textarea {
+            flex: 1;
+            background: var(--bg-deep);
+            color: #fff;
+            border: none;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-neon {
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            transition: 0.3s;
+        }
+
+        .btn-neon:hover {
+            box-shadow: 0 0 20px var(--neon-cyan);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        iframe#preview-frame {
+            flex: 1;
+            background: #fff;
+            border: none;
+        }
+
+        /* Lessons View */
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        .card h3 {
+            color: var(--neon-cyan);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        /* Gallery View */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .project-preview-box {
+            height: 150px;
+            background: var(--bg-deep);
+            border-radius: 8px;
+            border: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        /* Quiz & Certificate View */
+        .quiz-box, .cert-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .quiz-question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .certificate {
+            background: radial-gradient(circle, #1a1a2b 0%, #0a0a0f 100%);
+            border: 4px double var(--neon-cyan);
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            display: none;
+        }
+
+        .certificate h1 {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer span {
+            color: var(--neon-cyan);
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+        }
+
+        /* Modal Overlay */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 15, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-panel);
+            border: 1px solid var(--neon-pink);
+            padding: 30px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-content input {
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            padding: 10px;
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .modal-content input:focus {
+            border-color: var(--neon-pink);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">COKO<span>.coding</span></div>
+        <nav>
+            <button class="nav-btn active" onclick="switchView('ide', this)">IDE & Run</button>
+            <button class="nav-btn" onclick="switchView('lessons', this)">Lessons</button>
+            <button class="nav-btn" onclick="switchView('gallery', this)">Gallery</button>
+            <button class="nav-btn" onclick="switchView('quiz', this)">Quiz & Cert</button>
+        </nav>
+        <div class="user-panel">
+            <span id="user-display" style="color: var(--neon-cyan); font-weight:600;">Guest Student</span>
+            <button class="btn-secondary" onclick="openLoginModal()" id="auth-btn">Login</button>
+        </div>
+    </header>
+
+    <!-- VIEW 1: CODE EDITOR & LIVE PREVIEW -->
+    <div id="ide" class="view active">
+        <div class="ide-container">
+            <div class="editor-pane">
+                <div class="pane-header">
+                    <span class="pane-title">Workspace</span>
+                    <div class="editor-tabs">
+                        <button class="tab-btn active" onclick="switchTab('html', this)">HTML</button>
+                        <button class="tab-btn" onclick="switchTab('css', this)">CSS</button>
+                        <button class="tab-btn" onclick="switchTab('js', this)">JS</button>
+                        <button class="tab-btn" onclick="switchTab('python', this)">Python (Sim)</button>
+                    </div>
+                </div>
+                <textarea id="code-html" class="code-textarea" placeholder="Write HTML here..."><h1>Hello COKO Student!</h1>
+<p>Type your code and hit Run.</p></textarea>
+                <textarea id="code-css" class="code-textarea" style="display:none;" placeholder="Write CSS here...">body {
+    background: #0d0d1a;
+    color: #00f3ff;
+    font-family: sans-serif;
+    text-align: center;
+    padding-top: 50px;
+}</textarea>
+                <textarea id="code-js" class="code-textarea" style="display:none;" placeholder="Write JavaScript here...">console.log("COKO IDE Loaded successfully!");</textarea>
+                <textarea id="code-python" class="code-textarea" style="display:none;" placeholder="# Python Beginner Playground&#10;print('Hello from Python!')&#10;for i in range(3):&#10;    print('Count:', i)"># Python Beginner Playground
+print('Hello from Python!')
+for i in range(3):
+    print('Count:', i)</textarea>
+                <div class="action-bar">
+                    <button class="btn-neon" onclick="runCode()">▶ Run / Preview</button>
+                    <button class="btn-secondary" onclick="saveProject()">💾 Save Project</button>
+                </div>
+            </div>
+
+            <div class="preview-pane">
+                <div class="pane-header">
+                    <span class="pane-title">Live Preview / Console Output</span>
+                </div>
+                <iframe id="preview-frame"></iframe>
+                <div id="python-output" style="display:none; flex:1; background:var(--bg-deep); color:var(--neon-green); font-family:'Fira Code',monospace; padding:15px; overflow-y:auto; font-size:0.9rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: BEGINNER LESSONS -->
+    <div id="lessons" class="view">
+        <h2 style="color:var(--neon-cyan); margin-bottom: 20px;">Beginner Coding Lessons</h2>
+        <div class="lessons-grid">
+            <div class="card">
+                <h3>1. HTML Basics</h3>
+                <p>Learn how to structure web pages using tags like headings, paragraphs, and images.</p>
+                <button class="btn-secondary" onclick="loadLesson('<h1>HTML Lesson</h1><p>Tags are the building blocks!</p>', 'body { background: #111; color: #ff007f; padding: 20px; }')">Try in IDE</button>
+            </div>
+            <div class="card">
+                <h3>2. CSS Styling & Neon</h3>
+                <p>Add colors, fonts, and gorgeous neon glow effects to make your elements pop.</p>
+                <button class="btn-secondary" onclick="loadLesson('<div class=\'glow\'>Glowing Text</div>', '.glow { font-size: 2rem; color: #00f3ff; text-shadow: 0 0 10px #00f3ff; padding: 40px; text-align:center;}')">Try in IDE</button>
+            </div>
+            <div class="card">
+                <h3>3. Intro to JavaScript</h3>
+                <p>Make your pages interactive with buttons, alerts, and dynamic content changes.</p>
+                <button class="btn-secondary" onclick="loadLesson('<button onclick=\'alert(\"COKO Clicked!\")\'>Click Me</button>', 'button { padding: 15px 30px; font-size: 1rem; background: #9d00ff; color: white; border: none; border-radius: 8px; cursor: pointer; }')">Try in IDE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: STUDENT PROJECT GALLERY -->
+    <div id="gallery" class="view">
+        <h2 style="color:var(--neon-cyan); margin-bottom: 20px;">Student Project Gallery</h2>
+        <div class="gallery-grid" id="gallery-container"></div>
+    </div>
+
+    <!-- VIEW 4: QUIZ & CERTIFICATES -->
+    <div id="quiz" class="view">
+        <div class="quiz-box" id="quiz-container">
+            <h2 style="color:var(--neon-cyan); margin-bottom: 10px;">Beginner 20-Question Coding Quiz</h2>
+            <p style="color:var(--text-muted); margin-bottom: 20px;">Answer all 20 questions correctly to earn your certificate with full marks!</p>
+            <div id="quiz-questions-list" style="max-height: 400px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;"></div>
+            <button class="btn-neon" onclick="submitQuiz()">Submit Quiz & Get Certificate</button>
+        </div>
+
+        <div class="cert-box certificate" id="certificate-view">
+            <h1>🏆 Certificate of Completion</h1>
+            <p style="color: var(--text-muted); margin-bottom: 10px;">This certifies that</p>
+            <h2 id="cert-name" style="color: var(--neon-pink); font-size: 2.2rem; margin-bottom: 10px;">Student Name</h2>
+            <p id="cert-score" style="color: var(--neon-green); font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">Score: 20 / 20 (100% Full Marks)</p>
+            <p style="color: var(--text-main); margin-bottom: 30px;">Has successfully mastered the COKO Coding Beginner Level Curriculum.</p>
+            <button class="btn-neon" onclick="window.print()">Print / Save Certificate</button>
+        </div>
+    </div>
+
+    <!-- FOOTER WITH CREATOR NAME -->
+    <footer>
+        COKO Coding Platform &copy; 2026 | Website Creator: <span>S. Takshan</span>
+    </footer>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <h3 style="color:var(--neon-pink);">Student Login / Register</h3>
+            <input type="text" id="username-input" placeholder="Enter your student name...">
+            <button class="btn-neon" onclick="handleLogin()">Login / Register</button>
+            <button class="btn-secondary" onclick="closeLoginModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = localStorage.getItem('coko_user') || null;
+        let activeTab = 'html';
+        let sampleProjects = [
+            { title: "Neon Cyber Button", author: "Alex K.", code: "<button style='background:#ff007f; color:#fff; padding:15px 30px; border:none; border-radius:8px; box-shadow:0 0 15px #ff007f; font-weight:bold;'>Cyber Click</button>" },
+            { title: "Rainbow Header", author: "Sam M.", code: "<h1 style='color:#00f3ff; text-shadow:0 0 10px #00f3ff;'>Welcome to COKO</h1>" }
+        ];
+
+        // 20 Beginner Coding Questions
+        const quizData = [
+            { q: "1. What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Multi Language", "Hyper Transfer Machine Language"], answer: 0 },
+            { q: "2. Which HTML tag is used to create a hyperlink?", options: ["<link>", "<a>", "<href>"], answer: 1 },
+            { q: "3. What symbol is used in CSS to target an element by its ID?", options: [".", "#", "*"], answer: 1 },
+            { q: "4. What symbol is used in CSS to target a class name?", options: [".", "#", "&"], answer: 0 },
+            { q: "5. Which property is used to change the background color in CSS?", options: ["color", "bg-color", "background-color"], answer: 2 },
+            { q: "6. Inside which HTML element do we put the JavaScript code?", options: ["<javascript>", "<script>", "<js>"], answer: 1 },
+            { q: "7. How do you write 'Hello World' in an alert box in JavaScript?", options: ["msg('Hello World');", "alert('Hello World');", "prompt('Hello World');"], answer: 1 },
+            { q: "8. How do you create a function in JavaScript?", options: ["function myFunction()", "create function myFunction()", "def myFunction()"], answer: 0 },
+            { q: "9. How does a FOR loop start in JavaScript?", options: ["for (i = 0; i <= 5; i++)", "for (i <= 5; i++)", "for i = 1 to 5"], answer: 0 },
+            { q: "10. Which language is used for styling web pages?", options: ["HTML", "JQuery", "CSS"], answer: 2 },
+            { q: "11. What file extension is typically used for web pages?", options: [".html", ".web", ".py"], answer: 0 },
+            { q: "12. In Python, how do you output text to the screen?", options: ["echo()", "print()", "write()"], answer: 1 },
+            { q: "13. Which HTML tag represents the largest heading?", options: ["<h6>", "<head>", "<h1>"], answer: 2 },
+            { q: "14. How do you write a single-line comment in JavaScript?", options: ["<!-- Comment -->", "// Comment", "/* Comment */"], answer: 1 },
+            { q: "15. Which property controls text size in CSS?", options: ["font-style", "text-size", "font-size"], answer: 2 },
+            { q: "16. Which HTML tag is used to display an image?", options: ["<img>", "<image>", "<pic>"], answer: 0 },
+            { q: "17. What does CSS stand for?", options: ["Colorful Style Sheets", "Cascading Style Sheets", "Computer Style Syntax"], answer: 1 },
+            { q: "18. Which operator is used to assign a value to a variable in JavaScript?", options: ["-", "*", "="], answer: 2 },
+            { q: "19. In Python, which keyword is used to define a function?", options: ["function", "def", "fun"], answer: 1 },
+            { q: "20. What is the correct HTML element for inserting a line break?", options: ["<br>", "<break>", "<lb>"], answer: 0 }
+        ];
+
+        if(currentUser) {
+            document.getElementById('user-display').innerText = currentUser;
+            document.getElementById('auth-btn').innerText = 'Logout';
+        }
+        renderGallery();
+        renderQuiz();
+        runCode();
+
+        function switchView(viewId, btn) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('nav .nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function switchTab(tab, btn) {
+            activeTab = tab;
+            document.querySelectorAll('.code-textarea').forEach(ta => ta.style.display = 'none');
+            document.querySelectorAll('.editor-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            if(tab === 'python') {
+                document.getElementById('code-python').style.display = 'block';
+                document.getElementById('preview-frame').style.display = 'none';
+                document.getElementById('python-output').style.display = 'block';
+            } else {
+                document.getElementById('code-' + tab).style.display = 'block';
+                document.getElementById('preview-frame').style.display = 'block';
+                document.getElementById('python-output').style.display = 'none';
+            }
+        }
+
+        function runCode() {
+            if(activeTab === 'python') {
+                const pyCode = document.getElementById('code-python').value;
+                const outputBox = document.getElementById('python-output');
+                outputBox.innerHTML = "<strong>[Python Output Simulation]</strong><br>";
+                const lines = pyCode.split('\n');
+                lines.forEach(line => {
+                    if(line.includes('print(')) {
+                        let content = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')'));
+                        content = content.replace(/['"]/g, '');
+                        outputBox.innerHTML += `> ${content}<br>`;
+                    }
+                });
+            } else {
+                const html = document.getElementById('code-html').value;
+                const css = document.getElementById('code-css').value;
+                const js = document.getElementById('code-js').value;
+                
+                const frame = document.getElementById('preview-frame');
+                const doc = frame.contentDocument || frame.contentWindow.document;
+                doc.open();
+                doc.write(`${html}<style>${css}</style><script>${js}<\/script>`);
+                doc.close();
+            }
+        }
+
+        function saveProject() {
+            const html = document.getElementById('code-html').value;
+            const css = document.getElementById('code-css').value;
+            const combined = `${html}<style>${css}</style>`;
+            
+            sampleProjects.unshift({
+                title: `${currentUser || 'Anonymous'} Project`,
+                author: currentUser || 'Guest Student',
+                code: combined
+            });
+            renderGallery();
+            alert("Project saved successfully to the Student Gallery!");
+            switchView('gallery', document.querySelectorAll('nav .nav-btn')[2]);
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = sampleProjects.map(p => `
+                <div class="project-card">
+                    <h3 style="color:var(--neon-cyan); margin-bottom:5px;">${p.title}</h3>
+                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:10px;">By ${p.author}</p>
+                    <div class="project-preview-box">
+                        <div>${escapeHtml(p.code)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function loadLesson(htmlSnippet, cssSnippet) {
+            document.getElementById('code-html').value = htmlSnippet;
+            document.getElementById('code-css').value = cssSnippet;
+            switchView('ide', document.querySelectorAll('nav .nav-btn')[0]);
+            runCode();
+        }
+
+        function renderQuiz() {
+            const list = document.getElementById('quiz-questions-list');
+            list.innerHTML = quizData.map((item, qIndex) => `
+                <div class="quiz-question-card">
+                    <p style="font-weight:600; margin-bottom:8px; color:var(--text-main);">${item.q}</p>
+                    <div style="display:flex; flex-direction:column; gap:5px;">
+                        ${item.options.map((opt, oIndex) => `
+                            <label style="cursor:pointer; color:var(--text-muted); font-size:0.9rem;">
+                                <input type="radio" name="question_${qIndex}" value="${oIndex}"> ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function submitQuiz() {
+            let score = 0;
+
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="question_${index}"]:checked`);
+                if(selected && parseInt(selected.value) === item.answer) {
+                    score++;
+                }
+            });
+
+            if(score === 20) {
+                document.getElementById('quiz-container').style.display = 'none';
+                document.getElementById('certificate-view').style.display = 'block';
+                document.getElementById('cert-name').innerText = currentUser || 'Valued Student';
+                document.getElementById('cert-score').innerText = `Score: 20 / 20 (100% Full Marks)`;
+            } else {
+                alert(`You scored ${score} / 20. You need 20/20 full marks to earn your certificate! Check your answers and try again.`);
+            }
+        }
+
+        function openLoginModal() {
+            if(currentUser) {
+                localStorage.removeItem('coko_user');
+                currentUser = null;
+                document.getElementById('user-display').innerText = 'Guest Student';
+                document.getElementById('auth-btn').innerText = 'Login';
+            } else {
+                document.getElementById('login-modal').style.display = 'flex';
+            }
+        }
+        function closeLoginModal() {
+            document.getElementById('login-modal').style.display = 'none';
+        }
+        function handleLogin() {
+            const val = document.getElementById('username-input').value.trim();
+            if(val) {
+                currentUser = val;
+                localStorage.setItem('coko_user', currentUser);
+                document.getElementById('user-display').innerText = currentUser;
+                document.getElementById('auth-btn').innerText = 'Logout';
+                closeLoginModal();
+            }
+        }
+    </script>
+</body>
+</html>
